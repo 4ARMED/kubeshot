@@ -42,7 +42,7 @@ func GetURLs(c *config.Config) ([]string, error) {
 
 	if c.GetK8sPods {
 		logger.Info("Fetching pods from Kubernetes API")
-
+		// not implemented yet
 	}
 
 	if c.GetK8sSvcs {
@@ -60,15 +60,20 @@ func GetURLs(c *config.Config) ([]string, error) {
 				if service.Spec.ClusterIP != "None" {
 					for _, port := range service.Spec.Ports {
 						if port.Protocol == "TCP" {
-							var url string
 							// Try and guess the correct protocol, http or https
 							if strings.HasPrefix(port.Name, "https") || port.Port == 443 {
-								url = fmt.Sprintf("https://%v:%d", service.Spec.ClusterIP, port.Port)
+								url := fmt.Sprintf("https://%v:%d", service.Spec.ClusterIP, port.Port)
+								urls = append(urls, url)
+							} else if port.Port == 80 {
+								url := fmt.Sprintf("http://%v:%d", service.Spec.ClusterIP, port.Port)
+								urls = append(urls, url)
 							} else {
-								url = fmt.Sprintf("http://%v:%d", service.Spec.ClusterIP, port.Port)
+								// Add both
+								httpUrl := fmt.Sprintf("http://%v:%d", service.Spec.ClusterIP, port.Port)
+								httpsUrl := fmt.Sprintf("https://%v:%d", service.Spec.ClusterIP, port.Port)
+								urls = append(urls, httpUrl)
+								urls = append(urls, httpsUrl)
 							}
-							logger.Debug("url: %v", url)
-							urls = append(urls, url)
 						}
 					}
 				}
