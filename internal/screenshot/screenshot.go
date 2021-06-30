@@ -52,6 +52,11 @@ func screenshot(url string, c *config.Config) {
 	}
 
 	browser := rod.New().MustConnect()
+	defer browser.MustClose()
+
+	// Ignore certificate warnings
+	browser.MustIgnoreCertErrors(true)
+
 	page, err := browser.Page(proto.TargetCreateTarget{
 		URL: url,
 	})
