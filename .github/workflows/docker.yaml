@@ -1,0 +1,32 @@
+name: Build and Push Container Image
+on: [push]
+env:
+  IMAGE_NAME: ghcr.io/4armed/kubeshot
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Get version
+        id: vars
+        run: echo ::set-output name=tag::$(echo ${GITHUB_SHA} | cut -c1-7)
+      - name: Build the tagged Docker image
+        run: docker build . -f build/Dockerfile --tag ${{ env.IMAGE_NAME }}:${{steps.vars.outputs.tag}}
+      - name: Push the tagged Docker image
+        run: docker push ${{ env.IMAGE_NAME }}:${{steps.vars.outputs.tag}}
+      - name: Tag image as latest
+        run: docker tag ${{ env.IMAGE_NAME }}:${{steps.vars.outputs.tag}} ${{ env.IMAGE_NAME }}:latest
+      - name: Push latest
+        run: docker push ${{ env.IMAGE_NAME }}:latest
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_CHANNEL: code
+          SLACK_ICON: https://github.com/4armed.png?size=48
+          SLACK_TITLE: GitHub Action Worflow Completed
+          SLACK_USERNAME: github-actions
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}

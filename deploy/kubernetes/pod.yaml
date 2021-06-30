@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: kubeshot
+  name: 4armed-kubeshot
+  namespace: default
+spec:
+  containers:
+    - args:
+        - bash
+      image: ghcr.io/4armed/kubeshot:latest
+      imagePullPolicy: Always
+      name: kubeshot
+      resources:
+        requests:
+          cpu: 100m
+          memory: 512M
+      stdin: true
+      stdinOnce: true
+      tty: true
+  restartPolicy: Always
+  securityContext: {}
+  serviceAccount: kubeshot
+  serviceAccountName: kubeshot
