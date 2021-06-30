@@ -71,8 +71,7 @@ func GetURLs(c *config.Config) ([]string, error) {
 								// Add both
 								httpUrl := fmt.Sprintf("http://%v:%d", service.Spec.ClusterIP, port.Port)
 								httpsUrl := fmt.Sprintf("https://%v:%d", service.Spec.ClusterIP, port.Port)
-								urls = append(urls, httpUrl)
-								urls = append(urls, httpsUrl)
+								urls = append(urls, httpUrl, httpsUrl)
 							}
 						}
 					}
