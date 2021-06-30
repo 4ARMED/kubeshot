@@ -22,11 +22,3 @@ jobs:
         run: docker tag ${{ env.IMAGE_NAME }}:${{steps.vars.outputs.tag}} ${{ env.IMAGE_NAME }}:latest
       - name: Push latest
         run: docker push ${{ env.IMAGE_NAME }}:latest
-      - name: Slack Notification
-        uses: rtCamp/action-slack-notify@master
-        env:
-          SLACK_CHANNEL: code
-          SLACK_ICON: https://github.com/4armed.png?size=48
-          SLACK_TITLE: GitHub Action Worflow Completed
-          SLACK_USERNAME: github-actions
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
