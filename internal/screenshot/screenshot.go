@@ -61,7 +61,7 @@ func screenshot(url string, c *config.Config) {
 		URL: url,
 	})
 	if err != nil {
-		logger.Warning("could not load URL %s: %v", url, err)
+		logger.Warning("could not load page %s: %v", url, err)
 		return
 	}
 
