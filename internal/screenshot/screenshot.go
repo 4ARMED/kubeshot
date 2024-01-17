@@ -78,9 +78,11 @@ func screenshot(url string, c *config.Config) {
 		return
 	}
 
+	quality := 90
+
 	img, err := page.Screenshot(true, &proto.PageCaptureScreenshot{
 		Format:  proto.PageCaptureScreenshotFormatPng,
-		Quality: 90,
+		Quality: &quality,
 	})
 	if err != nil {
 		logger.Warning("screenshot returned error: %v", err)
