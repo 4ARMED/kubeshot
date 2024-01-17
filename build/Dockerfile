@@ -33,8 +33,14 @@ RUN \
   # headful mode support, for example: $ xvfb-run chromium-browser --remote-debugging-port=9222
   xvfb \
   # cleanup
-  && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
+  && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN useradd -u 1001 -m -s /bin/bash kubeshot
 
 COPY --from=build /go/bin/kubeshot /usr/local/bin/kubeshot
 
 WORKDIR /data
+
+RUN chown kubeshot:kubeshot /data
+
+USER kubeshot
