@@ -1,9 +1,12 @@
 package screenshot
 
 import (
+	"context"
+	"errors"
 	"net/url"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/4armed/kubeshot/internal/config"
 	"github.com/go-rod/rod"
@@ -51,23 +54,27 @@ func screenshot(url string, c *config.Config) {
 		logger.Warning("getFilename returned error: %v", err)
 	}
 
-	browser := rod.New().MustConnect()
+	browser := rod.New().
+		MustConnect().
+		MustIgnoreCertErrors(true) // Ignore certificate warnings
 	defer browser.MustClose()
 
-	// Ignore certificate warnings
-	browser.MustIgnoreCertErrors(true)
+	page := browser.MustPage()
 
-	page, err := browser.Page(proto.TargetCreateTarget{
-		URL: url,
+	err = rod.Try(func() {
+		page.Timeout(2 * time.Second).MustNavigate(url)
 	})
-	if err != nil {
-		logger.Warning("could not load page %s: %v", url, err)
+	if errors.Is(err, context.DeadlineExceeded) {
+		logger.Warning("timeout loading URL %s: %v", url, err)
+		return
+	} else if err != nil {
+		logger.Warning("could not load URL %s: %v", url, err)
 		return
 	}
 
 	err = page.WaitLoad()
 	if err != nil {
-		logger.Warning("could not load URL %s: %v", url, err)
+		logger.Warning("error waiting for window.onload at %s: %v", url, err)
 		return
 	}
 
