@@ -52,6 +52,7 @@ func screenshot(url string, c *config.Config) {
 	filename, err := getFilename(url, c.OutputDir)
 	if err != nil {
 		logger.Warning("getFilename returned error: %v", err)
+		return
 	}
 
 	browser := rod.New().
