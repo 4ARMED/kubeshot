@@ -62,7 +62,7 @@ func screenshot(url string, c *config.Config) {
 	page := browser.MustPage()
 
 	err = rod.Try(func() {
-		page.Timeout(2 * time.Second).MustNavigate(url)
+		page.Timeout(time.Duration(c.TimeoutSeconds) * time.Second).MustNavigate(url)
 	})
 	if errors.Is(err, context.DeadlineExceeded) {
 		logger.Warning("timeout loading URL %s: %v", url, err)

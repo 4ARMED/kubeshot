@@ -9,4 +9,5 @@ type Config struct {
 	GetK8sSvcs      bool
 	ChromeExe       string
 	NumberOfWorkers int
+	TimeoutSeconds  int
 }

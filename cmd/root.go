@@ -99,6 +99,7 @@ func init() {
 	rootCmd.Flags().StringVarP(&c.InputFile, "file", "f", "", "File containing URLs to process, each on a separate line")
 	rootCmd.Flags().StringVarP(&c.OutputDir, "directory", "d", "", "Directory to write output to")
 	rootCmd.Flags().IntVarP(&c.NumberOfWorkers, "workers", "w", 3, "number of concurrent workers")
+	rootCmd.Flags().IntVarP(&c.TimeoutSeconds, "timeout", "t", 2, "timeout in seconds")
 
 	rootCmd.PersistentFlags().IntVarP(&logger.Level, "verbose", "v", 3, "set log level, use 0 to silence, 4 for debugging")
 	rootCmd.PersistentFlags().BoolVarP(&logger.Color, "color", "C", true, "toggle colorised logs")
